@@ -47,3 +47,49 @@ export function activate(context: vscode.ExtensionContext) {
 export function deactivate() {
 }
 
+function getProfile(syntax: string): any {
+    let profiles = vscode.workspace.getConfiguration('emmet')['syntaxProfiles'];
+    return profiles ? profiles[syntax] : null;
+}
+
+function getSnippets(): any {
+    return getEmmetCustomization('snippets.json');
+}
+
+function getEmmetCustomization(fileName: string): any {
+    let extPath = vscode.workspace.getConfiguration('emmet')['extensionsPath'];
+    if (!extPath || !extPath.trim()) {
+        return;
+    }
+
+    let dirPath = path.isAbsolute(extPath) ? extPath : path.join(vscode.workspace.rootPath, extPath);
+    let filePath = path.join(dirPath, fileName);
+    if (!fileExists(filePath)) {
+        return;
+    }
+
+    let buffer = fs.readFileSync(filePath);
+    let parsedData = {};
+    try {
+        parsedData = JSON.parse(buffer.toString());
+    } catch (err) {
+        vscode.window.showErrorMessage(`Error while parsing "${filePath}": ${err}`);
+    }
+    return parsedData;
+}
+
+function fileExists(filePath: string): boolean {
+    try {
+        return fs.statSync(filePath).isFile();
+    } catch (e) {
+        return false;
+    }
+}
+
+function dirExists(dirPath: string): boolean {
+    try {
+        return fs.statSync(dirPath).isDirectory();
+    } catch (e) {
+        return false;
+    }
+}
