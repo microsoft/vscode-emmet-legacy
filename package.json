@@ -11,14 +11,28 @@
         "Other"
     ],
     "activationEvents": [
+        "onLanguage:html",
         "onCommand:emmet.expand"
     ],
     "main": "./out/src/extension",
     "contributes": {
-        "commands": [{
-            "command": "emmet.expand",
-            "title": "Emmet 2.0: Expand Abbreviation"
-        }]
+        "commands": [
+            {
+                "command": "emmet.expand",
+                "title": "Emmet 2.0: Expand Abbreviation"
+            }
+        ],
+        "languages": [
+            {
+                "id": "html",
+                "extensions": [
+                    ".html"
+                ],
+                "aliases": [
+                    "HTML"
+                ]
+            }
+        ]
     },
     "scripts": {
         "vscode:prepublish": "tsc -p ./",
@@ -33,7 +47,7 @@
         "@types/node": "^6.0.40",
         "@types/mocha": "^2.2.32"
     },
-     "dependencies": {
-         "@emmetio/expand-abbreviation": "^0.4.2"
-     }
+    "dependencies": {
+        "@emmetio/expand-abbreviation": "^0.4.2"
+    }
 }

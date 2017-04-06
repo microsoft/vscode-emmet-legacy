@@ -7,6 +7,8 @@ import * as fs from 'fs';
 
 const field = (index, placeholder) => `\${${index}${placeholder ? ':' + placeholder : ''}}`;
 
+export const HTML_MODE: vscode.DocumentFilter = { language: 'html', scheme: 'file' };
+
 export function activate(context: vscode.ExtensionContext) {
 
     let disposable = vscode.commands.registerCommand('emmet.expand', () => {
@@ -20,15 +22,9 @@ export function activate(context: vscode.ExtensionContext) {
         let wordToExpand = editor.document.getText(editor.selection);
 
         if (editor.selection.start.character === editor.selection.end.character) {
-            let currentLine = editor.document.lineAt(editor.selection.start.line).text;
-            let lineTillCursor = currentLine.substr(0, editor.selection.start.character);
-            let match = lineTillCursor.match(/(\S+)$/);
-            if (match) {
-                rangeToReplace = new vscode.Range(editor.selection.start.line, editor.selection.start.character - match[1].length, editor.selection.start.line, editor.selection.start.character);
-                wordToExpand = match[1];
-            } else {
-                return;
-            }
+           let result = getWordAndRangeToReplace(editor.selection.start);
+           rangeToReplace = result[0];
+           wordToExpand = result[1];
         }
 
         let expandedWord = expand(wordToExpand, {
@@ -42,8 +38,41 @@ export function activate(context: vscode.ExtensionContext) {
 
     context.subscriptions.push(disposable);
 
+    context.subscriptions.push(vscode.languages.registerCompletionItemProvider(HTML_MODE, new EmmetCompletionItemProvider()));
+
 }
 
 export function deactivate() {
 }
 
+export class EmmetCompletionItemProvider implements vscode.CompletionItemProvider {
+
+    public provideCompletionItems(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken): Thenable<vscode.CompletionItem[]> {
+        let [rangeToReplace, wordToExpand] = getWordAndRangeToReplace(position);
+        let expandedWord = expand(wordToExpand, {
+            field: field,
+            syntax: document.languageId
+        });
+
+        let snippet = new vscode.SnippetString(expandedWord);
+
+        let completionitem = new vscode.CompletionItem(wordToExpand);
+        completionitem.insertText = snippet;
+        completionitem.detail = expandedWord;
+        return Promise.resolve([completionitem]);
+    }
+}
+
+function getWordAndRangeToReplace(position: vscode.Position): [vscode.Range, string] {
+    let editor = vscode.window.activeTextEditor;
+    let currentLine = editor.document.lineAt(position.line).text;
+    let lineTillCursor = currentLine.substr(0, position.character);
+    let match = lineTillCursor.match(/(\S+)$/);
+    if (match) {
+        let rangeToReplace = new vscode.Range(position.line, position.character - match[1].length, position.line, position.character);
+        let wordToExpand = match[1];
+        return [rangeToReplace, wordToExpand];
+    } else {
+        return;
+    }
+}
