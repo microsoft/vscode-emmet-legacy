@@ -58,7 +58,8 @@ export class EmmetCompletionItemProvider implements vscode.CompletionItemProvide
 
         let completionitem = new vscode.CompletionItem(wordToExpand);
         completionitem.insertText = snippet;
-        completionitem.detail = expandedWord;
+        completionitem.documentation = expandedWord;
+        completionitem.range = rangeToReplace;
         return Promise.resolve([completionitem]);
     }
 }
