@@ -2,6 +2,7 @@
 
 import * as vscode from 'vscode';
 import { expand } from '@emmetio/expand-abbreviation'
+import * as extract from '@emmetio/extract-abbreviation';
 import * as path from 'path';
 import * as fs from 'fs';
 
@@ -68,12 +69,8 @@ function getWordAndRangeToReplace(position: vscode.Position): [vscode.Range, str
     let editor = vscode.window.activeTextEditor;
     let currentLine = editor.document.lineAt(position.line).text;
     let lineTillCursor = currentLine.substr(0, position.character);
-    let match = lineTillCursor.match(/(\S+)$/);
-    if (match) {
-        let rangeToReplace = new vscode.Range(position.line, position.character - match[1].length, position.line, position.character);
-        let wordToExpand = match[1];
-        return [rangeToReplace, wordToExpand];
-    } else {
-        return;
-    }
+    let result= extract(lineTillCursor);
+    let rangeToReplace = new vscode.Range(position.line, result.location, position.line, position.character);
+        
+    return [rangeToReplace, result.abbreviation];
 }
