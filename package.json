@@ -10,6 +10,10 @@
     "categories": [
         "Other"
     ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/ramya-rao-a/vscode-emmet.git"
+    },
     "activationEvents": [
         "onLanguage:html",
         "onCommand:emmet.expand"
@@ -32,7 +36,18 @@
                     "HTML"
                 ]
             }
-        ]
+        ],
+        "configuration": {
+            "type": "object",
+            "title": "Go configuration",
+            "properties": {
+                "emmet.autocomplete": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Experimental: Shows emmet expansions as suggestions"
+                }
+            }
+        }
     },
     "scripts": {
         "vscode:prepublish": "tsc -p ./",
@@ -48,8 +63,7 @@
         "@types/mocha": "^2.2.32"
     },
     "dependencies": {
-        
-    "@emmetio/expand-abbreviation": "^0.5.0",
-    "@emmetio/extract-abbreviation": "^0.1.1"
+        "@emmetio/expand-abbreviation": "^0.5.0",
+        "@emmetio/extract-abbreviation": "^0.1.1"
     }
 }

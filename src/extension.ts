@@ -49,6 +49,9 @@ export function deactivate() {
 export class EmmetCompletionItemProvider implements vscode.CompletionItemProvider {
 
     public provideCompletionItems(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken): Thenable<vscode.CompletionItem[]> {
+        if (!vscode.workspace.getConfiguration('emmet')['autocomplete']){
+            return Promise.resolve([]);
+        }
         let [rangeToReplace, wordToExpand] = getWordAndRangeToReplace(position);
         let expandedWord = expand(wordToExpand, {
             field: field,
