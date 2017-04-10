@@ -62,7 +62,7 @@ export class EmmetCompletionItemProvider implements vscode.CompletionItemProvide
 
         let completionitem = new vscode.CompletionItem(wordToExpand);
         completionitem.insertText = snippet;
-        completionitem.documentation = expandedWord;
+        completionitem.documentation = expandedWord.replace(/\$\{\d+\}/g,'').replace(/\$\{\d+:([^\}]+)\}/g,'$1');
         completionitem.range = rangeToReplace;
         return Promise.resolve([completionitem]);
     }

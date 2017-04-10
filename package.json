@@ -43,7 +43,7 @@
             "properties": {
                 "emmet.autocomplete": {
                     "type": "boolean",
-                    "default": false,
+                    "default": true,
                     "description": "Experimental: Shows emmet expansions as suggestions"
                 }
             }
