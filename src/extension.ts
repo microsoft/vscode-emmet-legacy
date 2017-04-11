@@ -1,12 +1,13 @@
 'use strict';
 
 import * as vscode from 'vscode';
-import { expand } from '@emmetio/expand-abbreviation'
+import { expand, createSnippetsRegistry } from '@emmetio/expand-abbreviation'
 import * as extract from '@emmetio/extract-abbreviation';
 import * as path from 'path';
 import * as fs from 'fs';
 
 const field = (index, placeholder) => `\${${index}${placeholder ? ':' + placeholder : ''}}`;
+const snippetCompletionsCache = new Map<string, vscode.CompletionItem[]>();
 
 export const HTML_MODE: vscode.DocumentFilter = { language: 'html', scheme: 'file' };
 
@@ -58,13 +59,22 @@ export class EmmetCompletionItemProvider implements vscode.CompletionItemProvide
             syntax: document.languageId
         });
 
-        let snippet = new vscode.SnippetString(expandedWord);
-
         let completionitem = new vscode.CompletionItem(wordToExpand);
-        completionitem.insertText = snippet;
+        completionitem.insertText = new vscode.SnippetString(expandedWord);
         completionitem.documentation = expandedWord.replace(/\$\{\d+\}/g,'').replace(/\$\{\d+:([^\}]+)\}/g,'$1');
         completionitem.range = rangeToReplace;
-        return Promise.resolve([completionitem]);
+
+        // get current word
+        let wordAtPosition = document.getWordRangeAtPosition(position);
+        let currentWord = '';
+        if (wordAtPosition && wordAtPosition.start.character < position.character) {
+            let word = document.getText(wordAtPosition);
+            currentWord = word.substr(0, position.character - wordAtPosition.start.character);
+        }
+
+        let allItems = getSnippetCompletions(document.languageId, currentWord);
+        allItems.push(completionitem);
+        return Promise.resolve(allItems);
     }
 }
 
@@ -76,4 +86,33 @@ function getWordAndRangeToReplace(position: vscode.Position): [vscode.Range, str
     let rangeToReplace = new vscode.Range(position.line, result.location, position.line, position.character);
         
     return [rangeToReplace, result.abbreviation];
+}
+
+function getSnippetCompletions(syntax, prefix) {
+    if (!prefix){
+        return [];
+    }
+
+    if (!snippetCompletionsCache.has(syntax)) {
+        let registry = createSnippetsRegistry(syntax);
+        let completions: vscode.CompletionItem[] = registry.all({type: 'string'}).map(snippet => {
+            let expandedWord = expand(snippet.value, {
+                field: field,
+                syntax: syntax
+            });
+            
+            let item = new vscode.CompletionItem(snippet.key);
+            item.detail = expandedWord;
+            item.insertText = snippet.key;
+            return item;
+        });
+        snippetCompletionsCache.set(syntax, completions);
+    }
+
+    let snippetCompletions = snippetCompletionsCache.get(syntax);
+
+    snippetCompletions = snippetCompletions.filter(x => x.label.startsWith(prefix));
+
+    return snippetCompletions;
+
 }
