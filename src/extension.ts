@@ -14,7 +14,7 @@ export const HTML_MODE: vscode.DocumentFilter = { language: 'html', scheme: 'fil
 
 export function activate(context: vscode.ExtensionContext) {
 
-    context.subscriptions.push(vscode.languages.registerCompletionItemProvider(HTML_MODE, new EmmetCompletionItemProvider()));
+    context.subscriptions.push(vscode.languages.registerCompletionItemProvider(HTML_MODE, new EmmetCompletionItemProvider(), '.'));
     context.subscriptions.push(vscode.languages.registerCompletionItemProvider(HTML_MODE, new EmmetSnippetCompletionItemProvider()));
 }
 
