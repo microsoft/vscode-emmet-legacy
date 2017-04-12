@@ -49,7 +49,7 @@ export class EmmetSnippetCompletionItemProvider implements vscode.CompletionItem
     }
 }
 
-export function getWordAndRangeToReplace(position: vscode.Position): [vscode.Range, string] {
+function getWordAndRangeToReplace(position: vscode.Position): [vscode.Range, string] {
     let editor = vscode.window.activeTextEditor;
     let currentLine = editor.document.lineAt(position.line).text;
     let lineTillCursor = currentLine.substr(0, position.character);

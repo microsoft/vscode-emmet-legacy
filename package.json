@@ -15,17 +15,10 @@
         "url": "https://github.com/ramya-rao-a/vscode-emmet.git"
     },
     "activationEvents": [
-        "onLanguage:html",
-        "onCommand:emmet.expand"
+        "onLanguage:html"
     ],
     "main": "./out/src/extension",
     "contributes": {
-        "commands": [
-            {
-                "command": "emmet.expand",
-                "title": "Emmet 2.0: Expand Abbreviation"
-            }
-        ],
         "languages": [
             {
                 "id": "html",
