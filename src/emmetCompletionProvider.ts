@@ -3,8 +3,6 @@
 import * as vscode from 'vscode';
 import { expand, createSnippetsRegistry } from '@emmetio/expand-abbreviation'
 import * as extract from '@emmetio/extract-abbreviation';
-import * as path from 'path';
-import * as fs from 'fs';
 
 const field = (index, placeholder) => `\${${index}${placeholder ? ':' + placeholder : ''}}`;
 const snippetCompletionsCache = new Map<string, vscode.CompletionItem[]>();
