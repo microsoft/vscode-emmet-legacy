@@ -24,26 +24,8 @@ export class EmmetCompletionItemProvider implements vscode.CompletionItemProvide
         completionitem.documentation = expandedWord.replace(/\$\{\d+\}/g, '').replace(/\$\{\d+:([^\}]+)\}/g, '$1');
         completionitem.range = rangeToReplace;
 
-        return Promise.resolve(new vscode.CompletionList([completionitem], true));
-    }
-}
-
-export class EmmetSnippetCompletionItemProvider implements vscode.CompletionItemProvider {
-    public provideCompletionItems(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken): Thenable<vscode.CompletionItem[]> {
-        if (!vscode.workspace.getConfiguration('emmet')['autocomplete']) {
-            return Promise.resolve([]);
-        }
-
-        // get current word
-        let wordAtPosition = document.getWordRangeAtPosition(position);
-        let currentWord = '';
-        if (wordAtPosition && wordAtPosition.start.character < position.character) {
-            let word = document.getText(wordAtPosition);
-            currentWord = word.substr(0, position.character - wordAtPosition.start.character);
-        }
-
-        let allItems = getSnippetCompletions(document.languageId, currentWord);
-        return Promise.resolve(allItems);
+        let snippetCompletionItems = getSnippetCompletions(document.languageId, getCurrentWord(document, position));
+        return Promise.resolve(new vscode.CompletionList([completionitem, ...snippetCompletionItems], true));
     }
 }
 
@@ -51,9 +33,19 @@ function getWordAndRangeToReplace(position: vscode.Position): [vscode.Range, str
     let editor = vscode.window.activeTextEditor;
     let currentLine = editor.document.lineAt(position.line).text;
     let result = extract(currentLine, position.character, true);
-    let rangeToReplace = new vscode.Range(position.line, result.location, position.line, position.character);
+    let rangeToReplace = new vscode.Range(position.line, result.location, position.line, result.location + result.abbreviation.length);
 
     return [rangeToReplace, result.abbreviation];
+}
+
+function getCurrentWord(document: vscode.TextDocument, position: vscode.Position): string {
+    let wordAtPosition = document.getWordRangeAtPosition(position);
+    let currentWord = '';
+    if (wordAtPosition && wordAtPosition.start.character < position.character) {
+        let word = document.getText(wordAtPosition);
+        currentWord = word.substr(0, position.character - wordAtPosition.start.character);
+    }
+    return currentWord;
 }
 
 function getSnippetCompletions(syntax, prefix) {

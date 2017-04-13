@@ -4,4 +4,6 @@ This is experimental alpha version of new Emmet plugin. Currently, plugin only e
 
 The expanded emmet abbreviation shows up in the auto completion list along with all suggested abbreviations.
 
+![Emmet Completions](emmet.gif)
+
 Expansion is supported only on HTML files, support for rest will be added later.
