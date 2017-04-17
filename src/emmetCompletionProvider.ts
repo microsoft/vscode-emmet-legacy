@@ -16,7 +16,7 @@ export class EmmetCompletionItemProvider implements vscode.CompletionItemProvide
         let [rangeToReplace, wordToExpand] = getWordAndRangeToReplace(position);
         let expandedWord = expand(wordToExpand, {
             field: field,
-            syntax: document.languageId
+            syntax: getSyntax(document)
         });
 
         let completionitem = new vscode.CompletionItem(wordToExpand);
@@ -24,7 +24,7 @@ export class EmmetCompletionItemProvider implements vscode.CompletionItemProvide
         completionitem.documentation = expandedWord.replace(/\$\{\d+\}/g, '').replace(/\$\{\d+:([^\}]+)\}/g, '$1');
         completionitem.range = rangeToReplace;
 
-        let snippetCompletionItems = getSnippetCompletions(document.languageId, getCurrentWord(document, position));
+        let snippetCompletionItems = getSnippetCompletions(getSyntax(document), getCurrentWord(document, position));
         return Promise.resolve(new vscode.CompletionList([completionitem, ...snippetCompletionItems], true));
     }
 }
@@ -49,7 +49,7 @@ function getCurrentWord(document: vscode.TextDocument, position: vscode.Position
 }
 
 function getSnippetCompletions(syntax, prefix) {
-    if (!prefix) {
+    if (!prefix || isStyleSheet(syntax)) {
         return [];
     }
 
@@ -75,4 +75,15 @@ function getSnippetCompletions(syntax, prefix) {
 
     return snippetCompletions;
 
+}
+
+function isStyleSheet(syntax): boolean {
+    return (syntax === 'css' || syntax === 'scss' || syntax === 'less')
+}
+
+function getSyntax(document: vscode.TextDocument): string {
+    if (document.languageId === 'jade') {
+        return 'pug';
+    }
+    return document.languageId;
 }
