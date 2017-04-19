@@ -16,16 +16,18 @@
     },
     "activationEvents": [
         "onLanguage:html",
-        "onLanguage:xml",
         "onLanguage:jade",
+        "onLanguage:slim",
+        "onLanguage:haml",
+        "onLanguage:xml",
+        "onLanguage:xsl",
         "onLanguage:css",
         "onLanguage:scss",
         "onLanguage:sass",
         "onLanguage:less",
+        "onLanguage:stylus",
         "onLanguage:javascriptreact",
-        "onLanguage:typescriptreact",
-        "onLanguage:slim",
-        "onLanguage:haml"
+        "onLanguage:typescriptreact"
     ],
     "main": "./out/src/extension",
     "contributes": {
