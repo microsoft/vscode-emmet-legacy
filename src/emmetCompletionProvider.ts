@@ -79,7 +79,7 @@ function getSnippetCompletions(syntax, prefix) {
 }
 
 function isStyleSheet(syntax): boolean {
-    return (syntax === 'css' || syntax === 'scss' || syntax === 'less')
+    return (syntax === 'css' || syntax === 'scss' || syntax === 'sass' || syntax === 'less')
 }
 
 function getSyntax(document: vscode.TextDocument): string {
