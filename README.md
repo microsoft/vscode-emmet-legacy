@@ -6,11 +6,4 @@ The expanded emmet abbreviation shows up in the auto completion list along with 
 
 ![Emmet Completions](emmet.gif)
 
-Expansion is supported only on for the following syntaxes, support for rest will be added later.
-- html
-- xml
-- jade
-- css
-- scss
-- less
-- jsx
+
