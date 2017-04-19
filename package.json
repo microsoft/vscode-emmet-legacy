@@ -20,7 +20,9 @@
         "onLanguage:jade",
         "onLanguage:css",
         "onLanguage:scss",
-        "onLanguage:less"
+        "onLanguage:less",
+        "onLanguage:javascriptreact",
+        "onLanguage:typescriptreact"
     ],
     "main": "./out/src/extension",
     "contributes": {

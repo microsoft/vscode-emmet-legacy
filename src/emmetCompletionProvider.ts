@@ -23,6 +23,7 @@ export class EmmetCompletionItemProvider implements vscode.CompletionItemProvide
         completionitem.insertText = new vscode.SnippetString(expandedWord);
         completionitem.documentation = expandedWord.replace(/\$\{\d+\}/g, '').replace(/\$\{\d+:([^\}]+)\}/g, '$1');
         completionitem.range = rangeToReplace;
+        completionitem.kind = vscode.CompletionItemKind.Snippet;
 
         let snippetCompletionItems = getSnippetCompletions(getSyntax(document), getCurrentWord(document, position));
         return Promise.resolve(new vscode.CompletionList([completionitem, ...snippetCompletionItems], true));
@@ -84,6 +85,9 @@ function isStyleSheet(syntax): boolean {
 function getSyntax(document: vscode.TextDocument): string {
     if (document.languageId === 'jade') {
         return 'pug';
+    }
+    if (document.languageId === 'javascriptreact' || document.languageId === 'typescriptreact') {
+        return 'jsx';
     }
     return document.languageId;
 }

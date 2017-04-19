@@ -13,3 +13,4 @@ Expansion is supported only on for the following syntaxes, support for rest will
 - css
 - scss
 - less
+- jsx
