@@ -41,7 +41,14 @@
                     "description": "Experimental: Shows emmet expansions as suggestions"
                 }
             }
-        }
+        },
+        "commands": [
+            {
+                "command": "emmet.wrapAbbreviation",
+                "title": "Emmet 2.0 Wrap with abbreviation",
+                "description": "Use the new emmet 2.0 apis to wrap selected text with given abbreviation"
+            }
+        ]
     },
     "scripts": {
         "vscode:prepublish": "tsc -p ./",
