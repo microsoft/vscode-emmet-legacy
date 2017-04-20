@@ -25,14 +25,9 @@ export function wrapAbbreviation() {
     vscode.window.showInputBox().then(abbr => {
         if (!abbr || !abbr.trim()) return;
 
-        let parsedTree = parse(abbr, options);
-        let tree = parsedTree;
-        while (tree.children.length > 0) {
-            tree = tree.lastChild;
-        }
-        tree.value = textToReplace;
+        let newOptions = Object.assign({}, options, {text: textToReplace});
+        let expandedText = expand(abbr, newOptions);
 
-        let expandedText = expand(parsedTree, options);
         editor.insertSnippet(new vscode.SnippetString(expandedText), rangeToReplace);
     });
 }
