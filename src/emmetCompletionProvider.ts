@@ -3,7 +3,7 @@
 import * as vscode from 'vscode';
 import { expand, createSnippetsRegistry } from '@emmetio/expand-abbreviation'
 import * as extract from '@emmetio/extract-abbreviation';
-import { getSyntax, isStyleSheet } from './util';
+import { getSyntax, isStyleSheet, getProfile } from './util';
 
 const field = (index, placeholder) => `\${${index}${placeholder ? ':' + placeholder : ''}}`;
 const snippetCompletionsCache = new Map<string, vscode.CompletionItem[]>();
@@ -17,7 +17,8 @@ export class EmmetCompletionItemProvider implements vscode.CompletionItemProvide
         let [rangeToReplace, wordToExpand] = getWordAndRangeToReplace(position);
         let expandedWord = expand(wordToExpand, {
             field: field,
-            syntax: getSyntax(document)
+            syntax: getSyntax(document),
+            profile: getProfile(getSyntax(document))
         });
 
         let completionitem = new vscode.CompletionItem(wordToExpand);

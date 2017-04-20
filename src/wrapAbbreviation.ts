@@ -2,7 +2,7 @@
 
 import * as vscode from 'vscode';
 import { parse, expand } from '@emmetio/expand-abbreviation'
-import { getSyntax } from './util';
+import { getSyntax, getProfile } from './util';
 
 const field = (index, placeholder) => `\${${index}${placeholder ? ':' + placeholder : ''}}`;
 
@@ -19,15 +19,14 @@ export function wrapAbbreviation() {
     let textToReplace = editor.document.getText(rangeToReplace);
     let options = {
         field: field,
-        syntax: getSyntax(editor.document)
+        syntax: getSyntax(editor.document),
+        profile: getProfile(getSyntax(editor.document)),
+        text: textToReplace
     };
 
     vscode.window.showInputBox().then(abbr => {
         if (!abbr || !abbr.trim()) return;
-
-        let newOptions = Object.assign({}, options, {text: textToReplace});
-        let expandedText = expand(abbr, newOptions);
-
+        let expandedText = expand(abbr, options);
         editor.insertSnippet(new vscode.SnippetString(expandedText), rangeToReplace);
     });
 }
