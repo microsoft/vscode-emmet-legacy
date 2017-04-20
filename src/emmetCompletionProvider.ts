@@ -3,7 +3,7 @@
 import * as vscode from 'vscode';
 import { expand, createSnippetsRegistry } from '@emmetio/expand-abbreviation'
 import * as extract from '@emmetio/extract-abbreviation';
-import { getSyntax, isStyleSheet, getProfile } from './util';
+import { getSyntax, isStyleSheet, getProfile, getSnippets } from './util';
 
 const field = (index, placeholder) => `\${${index}${placeholder ? ':' + placeholder : ''}}`;
 const snippetCompletionsCache = new Map<string, vscode.CompletionItem[]>();
@@ -15,10 +15,12 @@ export class EmmetCompletionItemProvider implements vscode.CompletionItemProvide
             return Promise.resolve(new vscode.CompletionList([]));
         }
         let [rangeToReplace, wordToExpand] = getWordAndRangeToReplace(position);
+        let syntax = getSyntax(document);
         let expandedWord = expand(wordToExpand, {
             field: field,
-            syntax: getSyntax(document),
-            profile: getProfile(getSyntax(document))
+            syntax: syntax,
+            profile: getProfile(syntax),
+            snippets: getSnippets(syntax)
         });
 
         let completionitem = new vscode.CompletionItem(wordToExpand);
@@ -27,7 +29,7 @@ export class EmmetCompletionItemProvider implements vscode.CompletionItemProvide
         completionitem.range = rangeToReplace;
         completionitem.kind = vscode.CompletionItemKind.Snippet;
 
-        let snippetCompletionItems = getSnippetCompletions(getSyntax(document), getCurrentWord(document, position));
+        let snippetCompletionItems = getSnippetCompletions(syntax, getCurrentWord(document, position));
         return Promise.resolve(new vscode.CompletionList([completionitem, ...snippetCompletionItems], true));
     }
 }

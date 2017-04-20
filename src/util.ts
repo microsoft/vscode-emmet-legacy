@@ -1,6 +1,8 @@
 'use strict';
 
 import * as vscode from 'vscode';
+import * as path from 'path';
+import * as fs from 'fs';
 
 export function getSyntax(document: vscode.TextDocument): string {
     if (document.languageId === 'jade') {
@@ -59,4 +61,38 @@ export function getProfile(syntax: string): any {
         }
     }
     return newOptions;
+}
+
+export function getSnippets(syntax: string){
+    let extensionsPath = vscode.workspace.getConfiguration('emmet')['extensionsPath'];
+    if (!extensionsPath) {
+        return;
+    }
+    let snippetsFilePath = path.join(extensionsPath, 'snippets.json');
+    let fileExists = false;
+    
+	try {
+		fileExists = fs.statSync(snippetsFilePath).isFile();
+	} catch (e) {
+		return;
+	}
+
+    if (!fileExists) return;
+
+    let buff = fs.readFileSync(snippetsFilePath);
+    let parsedData = {};
+
+    try {
+        parsedData = JSON.parse(buff.toString());
+        parsedData = parsedData[syntax];
+    } catch (err) {
+        vscode.window.showInformationMessage(`Error while parsing "${snippetsFilePath}": ${err}`);
+    }
+
+    if (!parsedData) return;
+
+    let snippets = Object.assign({}, parsedData['snippets'], parsedData['abbreviations']);
+    if (!snippets) return;
+
+    return snippets;
 }
