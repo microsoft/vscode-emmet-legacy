@@ -4,6 +4,8 @@ This is experimental alpha version of new Emmet plugin. Currently, plugin only e
 
 The expanded emmet abbreviation shows up in the auto completion list along with all suggested abbreviations.
 
+The Expand and Wrap with abbreviation features are available as commands.
+
 ![Emmet Completions](emmet.gif)
 
 
