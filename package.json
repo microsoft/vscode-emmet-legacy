@@ -35,10 +35,15 @@
             "type": "object",
             "title": "Emmet configuration",
             "properties": {
-                "emmet.autocomplete": {
+                "emmet.suggestExpandedAbbreviation": {
                     "type": "boolean",
                     "default": true,
-                    "description": "Experimental: Shows emmet expansions as suggestions"
+                    "description": "Shows expanded emmet abbreviations as suggestions"
+                },
+                "emmet.suggestAbbreviations": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Shows possinle emmet abbreviations as suggestions"
                 }
             }
         },

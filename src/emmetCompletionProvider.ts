@@ -11,35 +11,46 @@ const snippetCompletionsCache = new Map<string, vscode.CompletionItem[]>();
 export class EmmetCompletionItemProvider implements vscode.CompletionItemProvider {
 
     public provideCompletionItems(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken): Thenable<vscode.CompletionList> {
-        if (!vscode.workspace.getConfiguration('emmet')['autocomplete']) {
-            return Promise.resolve(new vscode.CompletionList([]));
-        }
-        let [rangeToReplace, wordToExpand] = getWordAndRangeToReplace(position);
-        let expandedWord = expand(wordToExpand, {
-            field: field,
-            syntax: getSyntax(document),
-            profile: getProfile(getSyntax(document))
-        });
 
-        let completionitem = new vscode.CompletionItem(wordToExpand);
-        completionitem.insertText = new vscode.SnippetString(expandedWord);
-        completionitem.documentation = expandedWord.replace(/\$\{\d+\}/g, '').replace(/\$\{\d+:([^\}]+)\}/g, '$1');
-        completionitem.range = rangeToReplace;
-        
-     //   completionitem.kind = vscode.CompletionItemKind.Snippet;
+        let expandedAbbr = getExpandedAbbreviation(document, position);
+        let abbreviationSuggestions = getAbbreviationSuggestions(getSyntax(document), getCurrentWord(document, position));
+        let completionItems = expandedAbbr ? [expandedAbbr, ...abbreviationSuggestions] : abbreviationSuggestions;
 
-        let snippetCompletionItems = getSnippetCompletions(getSyntax(document), getCurrentWord(document, position));
-        return Promise.resolve(new vscode.CompletionList([completionitem, ...snippetCompletionItems], true));
+        return Promise.resolve(new vscode.CompletionList(completionItems, true));
     }
+}
+
+function getExpandedAbbreviation(document: vscode.TextDocument, position: vscode.Position): vscode.CompletionItem {
+    if (!vscode.workspace.getConfiguration('emmet')['suggestExpandedAbbreviation']) {
+        return;
+    }
+    let [rangeToReplace, wordToExpand] = getWordAndRangeToReplace(position);
+    if (!rangeToReplace || !wordToExpand) {
+        return;
+    }
+    let expandedWord = expand(wordToExpand, {
+        field: field,
+        syntax: getSyntax(document),
+        profile: getProfile(getSyntax(document))
+    });
+
+    let completionitem = new vscode.CompletionItem(wordToExpand);
+    completionitem.insertText = new vscode.SnippetString(expandedWord);
+    completionitem.documentation = expandedWord.replace(/\$\{\d+\}/g, '').replace(/\$\{\d+:([^\}]+)\}/g, '$1');
+    completionitem.range = rangeToReplace;
+
+    return completionitem;
 }
 
 function getWordAndRangeToReplace(position: vscode.Position): [vscode.Range, string] {
     let editor = vscode.window.activeTextEditor;
     let currentLine = editor.document.lineAt(position.line).text;
     let result = extract(currentLine, position.character, true);
-    let rangeToReplace = new vscode.Range(position.line, result.location, position.line, result.location + result.abbreviation.length); 
+    if (!result) {
+        return [null, ''];
+    }
 
-  
+    let rangeToReplace = new vscode.Range(position.line, result.location, position.line, result.location + result.abbreviation.length);
     return [rangeToReplace, result.abbreviation];
 }
 
@@ -50,20 +61,12 @@ function getCurrentWord(document: vscode.TextDocument, position: vscode.Position
         let word = document.getText(wordAtPosition);
         currentWord = word.substr(0, position.character - wordAtPosition.start.character);
     }
-    
+
     return currentWord;
 }
 
-interface thisisaloverylongsentencesokeepreadingwhatamidoingwhoamidoesanybodyseeme{
-
-}
-
-interface hello{
-
-}
-
-function getSnippetCompletions(syntax, prefix) {
-    if (!prefix || isStyleSheet(syntax)) {
+function getAbbreviationSuggestions(syntax, prefix) {
+    if (!vscode.workspace.getConfiguration('emmet')['suggestAbbreviations'] || !prefix || isStyleSheet(syntax)) {
         return [];
     }
 
