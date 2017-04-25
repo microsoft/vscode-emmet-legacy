@@ -36,7 +36,7 @@ function getExpandedAbbreviation(document: vscode.TextDocument, position: vscode
 
     let completionitem = new vscode.CompletionItem(wordToExpand);
     completionitem.insertText = new vscode.SnippetString(expandedWord);
-    completionitem.documentation = expandedWord.replace(/\$\{\d+\}/g, '').replace(/\$\{\d+:([^\}]+)\}/g, '$1');
+    completionitem.documentation = removeTabStops(expandedWord);
     completionitem.range = rangeToReplace;
 
     return completionitem;
@@ -65,6 +65,9 @@ function getCurrentWord(document: vscode.TextDocument, position: vscode.Position
     return currentWord;
 }
 
+function removeTabStops(expandedWord: string): string {
+    return expandedWord.replace(/\$\{\d+\}/g, '').replace(/\$\{\d+:([^\}]+)\}/g, '$1');
+}
 function getAbbreviationSuggestions(syntax, prefix) {
     if (!vscode.workspace.getConfiguration('emmet')['suggestAbbreviations'] || !prefix || isStyleSheet(syntax)) {
         return [];
@@ -79,7 +82,7 @@ function getAbbreviationSuggestions(syntax, prefix) {
             });
 
             let item = new vscode.CompletionItem(snippet.key);
-            item.detail = expandedWord;
+            item.detail = removeTabStops(expandedWord);
             item.insertText = snippet.key;
             return item;
         });
