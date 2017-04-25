@@ -25,7 +25,8 @@ export class EmmetCompletionItemProvider implements vscode.CompletionItemProvide
         completionitem.insertText = new vscode.SnippetString(expandedWord);
         completionitem.documentation = expandedWord.replace(/\$\{\d+\}/g, '').replace(/\$\{\d+:([^\}]+)\}/g, '$1');
         completionitem.range = rangeToReplace;
-        completionitem.kind = vscode.CompletionItemKind.Snippet;
+        
+     //   completionitem.kind = vscode.CompletionItemKind.Snippet;
 
         let snippetCompletionItems = getSnippetCompletions(getSyntax(document), getCurrentWord(document, position));
         return Promise.resolve(new vscode.CompletionList([completionitem, ...snippetCompletionItems], true));
@@ -36,8 +37,9 @@ function getWordAndRangeToReplace(position: vscode.Position): [vscode.Range, str
     let editor = vscode.window.activeTextEditor;
     let currentLine = editor.document.lineAt(position.line).text;
     let result = extract(currentLine, position.character, true);
-    let rangeToReplace = new vscode.Range(position.line, result.location, position.line, result.location + result.abbreviation.length);
+    let rangeToReplace = new vscode.Range(position.line, result.location, position.line, result.location + result.abbreviation.length); 
 
+  
     return [rangeToReplace, result.abbreviation];
 }
 
@@ -48,7 +50,16 @@ function getCurrentWord(document: vscode.TextDocument, position: vscode.Position
         let word = document.getText(wordAtPosition);
         currentWord = word.substr(0, position.character - wordAtPosition.start.character);
     }
+    
     return currentWord;
+}
+
+interface thisisaloverylongsentencesokeepreadingwhatamidoingwhoamidoesanybodyseeme{
+
+}
+
+interface hello{
+
 }
 
 function getSnippetCompletions(syntax, prefix) {

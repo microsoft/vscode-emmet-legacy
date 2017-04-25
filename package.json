@@ -3,7 +3,7 @@
     "displayName": "emmet",
     "description": "Emmet support for VS Code",
     "version": "0.0.1",
-    "publisher": "ramyaraoa",
+    "publisher": "vscode",
     "engines": {
         "vscode": "^1.10.0"
     },
@@ -33,7 +33,7 @@
     "contributes": {
         "configuration": {
             "type": "object",
-            "title": "Go configuration",
+            "title": "Emmet configuration",
             "properties": {
                 "emmet.autocomplete": {
                     "type": "boolean",
@@ -44,7 +44,12 @@
         },
         "commands": [
             {
-                "command": "emmet.wrapAbbreviation",
+                "command": "emmet.expandAbbreviation",
+                "title": "Emmet 2.0 Expand abbreviation",
+                "description": "Use the new emmet 2.0 apis to expand given abbreviation"
+            },
+            {
+                "command": "emmet.wrapWithAbbreviation",
                 "title": "Emmet 2.0 Wrap with abbreviation",
                 "description": "Use the new emmet 2.0 apis to wrap selected text with given abbreviation"
             }

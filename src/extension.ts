@@ -2,7 +2,7 @@
 
 import * as vscode from 'vscode';
 import { EmmetCompletionItemProvider } from './emmetCompletionProvider'
-import { wrapAbbreviation } from './wrapAbbreviation'
+import { expandAbbreviation, wrapWithAbbreviation } from './abbreviationActions'
 
 const HTML_MODE: vscode.DocumentFilter = { language: 'html', scheme: 'file' };
 const JADE_MODE: vscode.DocumentFilter = { language: 'jade', scheme: 'file' };
@@ -36,8 +36,12 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(vscode.languages.registerCompletionItemProvider(JSX_MODE, completionProvider, '.'));
   context.subscriptions.push(vscode.languages.registerCompletionItemProvider(TSX_MODE, completionProvider, '.'));
 
-  context.subscriptions.push(vscode.commands.registerCommand('emmet.wrapAbbreviation', () => {
-    wrapAbbreviation();
+  context.subscriptions.push(vscode.commands.registerCommand('emmet.wrapWithAbbreviation', () => {
+    wrapWithAbbreviation();
+  }));
+
+  context.subscriptions.push(vscode.commands.registerCommand('emmet.expandAbbreviation', () => {
+    expandAbbreviation();
   }));
 }
 
