@@ -57,6 +57,16 @@
                 "command": "emmet.wrapWithAbbreviation",
                 "title": "Emmet 2.0 Wrap with abbreviation",
                 "description": "Use the new emmet 2.0 apis to wrap selected text with given abbreviation"
+            },
+            {
+                "command": "emmet.removeTag",
+                "title": "Emmet 2.0 Remove Tag",
+                "description": "Use the new emmet 2.0 apis to remove tag under the cursor"
+            },
+            {
+                "command": "emmet.updateTag",
+                "title": "Emmet 2.0 Update Tag",
+                "description": "Use the new emmet 2.0 apis to update tag under the cursor"
             }
         ]
     },
@@ -75,6 +85,7 @@
     },
     "dependencies": {
         "@emmetio/expand-abbreviation": "^0.5.0",
-        "@emmetio/extract-abbreviation": "^0.1.1"
+        "@emmetio/extract-abbreviation": "^0.1.1",
+        "@emmetio/html-matcher": "^0.3.1"
     }
 }

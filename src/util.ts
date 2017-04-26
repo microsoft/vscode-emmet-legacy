@@ -1,6 +1,8 @@
 'use strict';
 
 import * as vscode from 'vscode';
+import parse from '@emmetio/html-matcher';
+import Node from '@emmetio/node';
 
 export function getSyntax(document: vscode.TextDocument): string {
     if (document.languageId === 'jade') {
@@ -59,4 +61,32 @@ export function getProfile(syntax: string): any {
         }
     }
     return newOptions;
+}
+
+export function getOpenCloseRange(document: vscode.TextDocument, offset: number): [vscode.Range, vscode.Range] {
+    let rootNode: Node = parse(document.getText());
+    let nodeToUpdate = getNode(rootNode, offset);
+    let openRange = new vscode.Range(document.positionAt(nodeToUpdate.open.start), document.positionAt(nodeToUpdate.open.end));
+    let closeRange = null;
+    if (nodeToUpdate.close) {
+        closeRange = new vscode.Range(document.positionAt(nodeToUpdate.close.start), document.positionAt(nodeToUpdate.close.end));
+    }
+    return [openRange, closeRange];
+}
+
+export function getNode(root: Node, offset: number) {
+    let currentNode: Node = root.firstChild;
+    let foundNode: Node = null;
+
+    while (currentNode) {
+        if (currentNode.start <= offset && currentNode.end >= offset) {
+            foundNode = currentNode;
+            // Dig deeper
+            currentNode = currentNode.firstChild;
+        } else {
+            currentNode = currentNode.nextSibling;
+        }
+    }
+
+    return foundNode;
 }

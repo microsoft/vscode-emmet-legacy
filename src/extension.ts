@@ -3,6 +3,8 @@
 import * as vscode from 'vscode';
 import { EmmetCompletionItemProvider } from './emmetCompletionProvider'
 import { expandAbbreviation, wrapWithAbbreviation } from './abbreviationActions'
+import { removeTag } from './removeTag';
+import { updateTag } from './updateTag';
 
 const HTML_MODE: vscode.DocumentFilter = { language: 'html', scheme: 'file' };
 const JADE_MODE: vscode.DocumentFilter = { language: 'jade', scheme: 'file' };
@@ -42,6 +44,16 @@ export function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(vscode.commands.registerCommand('emmet.expandAbbreviation', () => {
     expandAbbreviation();
+  }));
+
+  context.subscriptions.push(vscode.commands.registerCommand('emmet.removeTag', () => {
+    removeTag();
+  }));
+
+  context.subscriptions.push(vscode.commands.registerCommand('emmet.updateTag', () => {
+    vscode.window.showInputBox({prompt: 'Enter the name of the tag'}).then(tagName => {
+      updateTag(tagName);
+    });
   }));
 }
 
