@@ -2,8 +2,7 @@
 
 import * as vscode from 'vscode';
 import { expand, createSnippetsRegistry } from '@emmetio/expand-abbreviation'
-import * as extract from '@emmetio/extract-abbreviation';
-import { getSyntax, isStyleSheet, getProfile } from './util';
+import { getSyntax, isStyleSheet, getProfile, extractAbbreviation } from './util';
 
 const field = (index, placeholder) => `\${${index}${placeholder ? ':' + placeholder : ''}}`;
 const snippetCompletionsCache = new Map<string, vscode.CompletionItem[]>();
@@ -24,7 +23,7 @@ function getExpandedAbbreviation(document: vscode.TextDocument, position: vscode
     if (!vscode.workspace.getConfiguration('emmet')['suggestExpandedAbbreviation']) {
         return;
     }
-    let [rangeToReplace, wordToExpand] = getWordAndRangeToReplace(position);
+    let [rangeToReplace, wordToExpand] = extractAbbreviation(position);
     if (!rangeToReplace || !wordToExpand) {
         return;
     }
@@ -40,18 +39,6 @@ function getExpandedAbbreviation(document: vscode.TextDocument, position: vscode
     completionitem.range = rangeToReplace;
 
     return completionitem;
-}
-
-function getWordAndRangeToReplace(position: vscode.Position): [vscode.Range, string] {
-    let editor = vscode.window.activeTextEditor;
-    let currentLine = editor.document.lineAt(position.line).text;
-    let result = extract(currentLine, position.character, true);
-    if (!result) {
-        return [null, ''];
-    }
-
-    let rangeToReplace = new vscode.Range(position.line, result.location, position.line, result.location + result.abbreviation.length);
-    return [rangeToReplace, result.abbreviation];
 }
 
 function getCurrentWord(document: vscode.TextDocument, position: vscode.Position): string {

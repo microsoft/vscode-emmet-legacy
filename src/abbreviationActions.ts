@@ -2,7 +2,7 @@
 
 import * as vscode from 'vscode';
 import { parse, expand } from '@emmetio/expand-abbreviation'
-import { getSyntax, getProfile } from './util';
+import { getSyntax, getProfile, extractAbbreviation } from './util';
 
 const field = (index, placeholder) => `\${${index}${placeholder ? ':' + placeholder : ''}}`;
 
@@ -38,10 +38,11 @@ export function expandAbbreviation() {
         return;
     }
     let rangeToReplace: vscode.Range = editor.selection;
-    if (rangeToReplace.isEmpty) {
-        rangeToReplace = new vscode.Range(rangeToReplace.start.line, 0, rangeToReplace.start.line, editor.document.lineAt(rangeToReplace.start.line).text.length);
-    }
     let abbr = editor.document.getText(rangeToReplace);
+    if (rangeToReplace.isEmpty) {
+        [rangeToReplace, abbr] = extractAbbreviation(rangeToReplace.start);
+    }
+    
     let options = {
         field: field,
         syntax: getSyntax(editor.document),
