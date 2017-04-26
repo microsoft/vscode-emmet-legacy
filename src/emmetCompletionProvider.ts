@@ -11,8 +11,9 @@ export class EmmetCompletionItemProvider implements vscode.CompletionItemProvide
 
     public provideCompletionItems(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken): Thenable<vscode.CompletionList> {
 
+        let currentWord = getCurrentWord(document, position);
         let expandedAbbr = getExpandedAbbreviation(document, position);
-        let abbreviationSuggestions = getAbbreviationSuggestions(getSyntax(document), getCurrentWord(document, position));
+        let abbreviationSuggestions = getAbbreviationSuggestions(getSyntax(document), currentWord, (expandedAbbr && currentWord === expandedAbbr.label));
         let completionItems = expandedAbbr ? [expandedAbbr, ...abbreviationSuggestions] : abbreviationSuggestions;
 
         return Promise.resolve(new vscode.CompletionList(completionItems, true));
@@ -37,6 +38,7 @@ function getExpandedAbbreviation(document: vscode.TextDocument, position: vscode
     completionitem.insertText = new vscode.SnippetString(expandedWord);
     completionitem.documentation = removeTabStops(expandedWord);
     completionitem.range = rangeToReplace;
+    completionitem.detail = 'Expanded abbreviation';
 
     return completionitem;
 }
@@ -55,7 +57,7 @@ function getCurrentWord(document: vscode.TextDocument, position: vscode.Position
 function removeTabStops(expandedWord: string): string {
     return expandedWord.replace(/\$\{\d+\}/g, '').replace(/\$\{\d+:([^\}]+)\}/g, '$1');
 }
-function getAbbreviationSuggestions(syntax, prefix) {
+function getAbbreviationSuggestions(syntax: string, prefix: string, skipExactMatch: boolean) {
     if (!vscode.workspace.getConfiguration('emmet')['suggestAbbreviations'] || !prefix || isStyleSheet(syntax)) {
         return [];
     }
@@ -69,7 +71,8 @@ function getAbbreviationSuggestions(syntax, prefix) {
             });
 
             let item = new vscode.CompletionItem(snippet.key);
-            item.detail = removeTabStops(expandedWord);
+            item.documentation = removeTabStops(expandedWord);
+            item.detail = 'Emmet abbreviation';
             item.insertText = snippet.key;
             return item;
         });
@@ -78,7 +81,7 @@ function getAbbreviationSuggestions(syntax, prefix) {
 
     let snippetCompletions = snippetCompletionsCache.get(syntax);
 
-    snippetCompletions = snippetCompletions.filter(x => x.label.startsWith(prefix));
+    snippetCompletions = snippetCompletions.filter(x => x.label.startsWith(prefix) && (!skipExactMatch || x.label !== prefix));
 
     return snippetCompletions;
 

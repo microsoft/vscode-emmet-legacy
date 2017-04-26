@@ -24,7 +24,7 @@ export function wrapWithAbbreviation() {
         text: textToReplace
     };
 
-    vscode.window.showInputBox().then(abbr => {
+    vscode.window.showInputBox({prompt: 'Enter Abbreviation'}).then(abbr => {
         if (!abbr || !abbr.trim()) return;
         let expandedText = expand(abbr, options);
         editor.insertSnippet(new vscode.SnippetString(expandedText), rangeToReplace);

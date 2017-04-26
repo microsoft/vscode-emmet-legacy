@@ -52,7 +52,7 @@ export function activate(context: vscode.ExtensionContext) {
   }));
 
   context.subscriptions.push(vscode.commands.registerCommand('emmet.updateTag', () => {
-    vscode.window.showInputBox({prompt: 'Enter the name of the tag'}).then(tagName => {
+    vscode.window.showInputBox({prompt: 'Enter Tag'}).then(tagName => {
       updateTag(tagName);
     });
   }));
