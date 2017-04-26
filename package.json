@@ -43,30 +43,35 @@
                 "emmet.suggestAbbreviations": {
                     "type": "boolean",
                     "default": true,
-                    "description": "Shows possinle emmet abbreviations as suggestions"
+                    "description": "Shows possible emmet abbreviations as suggestions"
                 }
             }
         },
         "commands": [
             {
                 "command": "emmet.expandAbbreviation",
-                "title": "Emmet 2.0 Expand abbreviation",
+                "title": "Emmet 2.0: Expand abbreviation",
                 "description": "Use the new emmet 2.0 apis to expand given abbreviation"
             },
             {
                 "command": "emmet.wrapWithAbbreviation",
-                "title": "Emmet 2.0 Wrap with abbreviation",
+                "title": "Emmet 2.0: Wrap with abbreviation",
                 "description": "Use the new emmet 2.0 apis to wrap selected text with given abbreviation"
             },
             {
                 "command": "emmet.removeTag",
-                "title": "Emmet 2.0 Remove Tag",
+                "title": "Emmet 2.0: Remove Tag",
                 "description": "Use the new emmet 2.0 apis to remove tag under the cursor"
             },
             {
                 "command": "emmet.updateTag",
-                "title": "Emmet 2.0 Update Tag",
+                "title": "Emmet 2.0: Update Tag",
                 "description": "Use the new emmet 2.0 apis to update tag under the cursor"
+            },
+            {
+                "command": "emmet.matchTag",
+                "title": "Emmet 2.0: Go to Matching Pair",
+                "description": "Use the new emmet 2.0 apis to go to the tag matching the tag under the cursor"
             }
         ]
     },
