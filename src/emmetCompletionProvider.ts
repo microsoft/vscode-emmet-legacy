@@ -38,7 +38,7 @@ function getExpandedAbbreviation(document: vscode.TextDocument, position: vscode
     completionitem.insertText = new vscode.SnippetString(expandedWord);
     completionitem.documentation = removeTabStops(expandedWord);
     completionitem.range = rangeToReplace;
-    completionitem.detail = 'Expanded abbreviation';
+    completionitem.detail = 'Expand Emmet Abbreviation';
 
     return completionitem;
 }
@@ -72,7 +72,7 @@ function getAbbreviationSuggestions(syntax: string, prefix: string, skipExactMat
 
             let item = new vscode.CompletionItem(snippet.key);
             item.documentation = removeTabStops(expandedWord);
-            item.detail = 'Emmet abbreviation';
+            item.detail = 'Complete Emmet Abbreviation';
             item.insertText = snippet.key;
             return item;
         });
