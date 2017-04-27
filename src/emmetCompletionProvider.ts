@@ -28,10 +28,11 @@ function getExpandedAbbreviation(document: vscode.TextDocument, position: vscode
     if (!rangeToReplace || !wordToExpand) {
         return;
     }
+    let syntax = getSyntax(document);
     let expandedWord = expand(wordToExpand, {
         field: field,
-        syntax: getSyntax(document),
-        profile: getProfile(getSyntax(document))
+        syntax: syntax,
+        profile: getProfile(syntax)
     });
 
     let completionitem = new vscode.CompletionItem(wordToExpand);
@@ -40,6 +41,11 @@ function getExpandedAbbreviation(document: vscode.TextDocument, position: vscode
     completionitem.range = rangeToReplace;
     completionitem.detail = 'Expand Emmet Abbreviation';
 
+    // In non stylesheet like syntax, this extension returns expanded abbr plus posssible abbr completions
+    // To differentiate between the 2, the former is given CompletionItemKind.Value so that it gets a different icon
+    if (!isStyleSheet(syntax)) {
+        completionitem.kind = vscode.CompletionItemKind.Value;
+    }
     return completionitem;
 }
 
