@@ -44,11 +44,6 @@
                     "type": "boolean",
                     "default": true,
                     "description": "Shows possible emmet abbreviations as suggestions"
-                },
-                "emmet.overrideBuiltinActions": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "If set to true, built-in Emmet Actions will use this extension"
                 }
             }
         }
