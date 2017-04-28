@@ -4,16 +4,17 @@ This is experimental alpha version of new Emmet plugin with limited features.
 
 - Expanded abbreviation show up in the suggestion list.
 - Possible abbreviations show up in the sugestion list.
-- Commands
-    - Emmet 2.0: Expand abbreviation
+- TAB is no longer used for expanding emmet abbreviations. Instead the suggestion list is used.
+- The below commands already available from the built in emmet in the product will be overridden by this extension
+    - Emmet: Expand abbreviation
         - The selected text or the text preceeding the cursor if no text is selected is taken as the abbreviation to expand.
-    - Emmet 2.0: Wrap with abbreviation
+    - Emmet: Wrap with abbreviation
         - The selected text or the current line if no text is selected, is wrapped with given abbreviation. 
-    - Emmet 2.0: Remove Tag
+    - Emmet: Remove Tag
         - The tag under the cursor is removed along with the corresponding opening/closing tag. Works with multiple cursors.
-    - Emmet 2.0: Update Tag
+    - Emmet: Update Tag
         - The tag under the cursor is updated to the given tag. Works with multiple cursors.
-    - Emmet 2.0: Go to Matching Pair
+    - Emmet: Go to Matching Pair
         - Cursor moves to the tag matching to the tag under cursor. Works with multiple cursors. 
 
 ![Emmet Completions](emmet.gif)
