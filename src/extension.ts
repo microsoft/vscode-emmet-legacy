@@ -23,48 +23,48 @@ const JSX_MODE: vscode.DocumentFilter = { language: 'javascriptreact', scheme: '
 const TSX_MODE: vscode.DocumentFilter = { language: 'typescriptreact', scheme: 'file' };
 
 export function activate(context: vscode.ExtensionContext) {
-  let completionProvider = new EmmetCompletionItemProvider();
-  context.subscriptions.push(vscode.languages.registerCompletionItemProvider(HTML_MODE, completionProvider, '!', '.'));
-  context.subscriptions.push(vscode.languages.registerCompletionItemProvider(JADE_MODE, completionProvider, '!', '.'));
-  context.subscriptions.push(vscode.languages.registerCompletionItemProvider(SLIM_MODE, completionProvider, '!', '.'));
-  context.subscriptions.push(vscode.languages.registerCompletionItemProvider(HAML_MODE, completionProvider, '!', '.'));
-  context.subscriptions.push(vscode.languages.registerCompletionItemProvider(XML_MODE, completionProvider, '.'));
-  context.subscriptions.push(vscode.languages.registerCompletionItemProvider(XSL_MODE, completionProvider, '.'));
+    let completionProvider = new EmmetCompletionItemProvider();
+    context.subscriptions.push(vscode.languages.registerCompletionItemProvider(HTML_MODE, completionProvider, '!', '.'));
+    context.subscriptions.push(vscode.languages.registerCompletionItemProvider(JADE_MODE, completionProvider, '!', '.'));
+    context.subscriptions.push(vscode.languages.registerCompletionItemProvider(SLIM_MODE, completionProvider, '!', '.'));
+    context.subscriptions.push(vscode.languages.registerCompletionItemProvider(HAML_MODE, completionProvider, '!', '.'));
+    context.subscriptions.push(vscode.languages.registerCompletionItemProvider(XML_MODE, completionProvider, '.'));
+    context.subscriptions.push(vscode.languages.registerCompletionItemProvider(XSL_MODE, completionProvider, '.'));
 
-  context.subscriptions.push(vscode.languages.registerCompletionItemProvider(CSS_MODE, completionProvider, ':'));
-  context.subscriptions.push(vscode.languages.registerCompletionItemProvider(SCSS_MODE, completionProvider, ':'));
-  context.subscriptions.push(vscode.languages.registerCompletionItemProvider(SASS_MODE, completionProvider, ':'));
-  context.subscriptions.push(vscode.languages.registerCompletionItemProvider(LESS_MODE, completionProvider, ':'));
-  context.subscriptions.push(vscode.languages.registerCompletionItemProvider(STYLUS_MODE, completionProvider, ':'));
+    context.subscriptions.push(vscode.languages.registerCompletionItemProvider(CSS_MODE, completionProvider, ':'));
+    context.subscriptions.push(vscode.languages.registerCompletionItemProvider(SCSS_MODE, completionProvider, ':'));
+    context.subscriptions.push(vscode.languages.registerCompletionItemProvider(SASS_MODE, completionProvider, ':'));
+    context.subscriptions.push(vscode.languages.registerCompletionItemProvider(LESS_MODE, completionProvider, ':'));
+    context.subscriptions.push(vscode.languages.registerCompletionItemProvider(STYLUS_MODE, completionProvider, ':'));
 
-  context.subscriptions.push(vscode.languages.registerCompletionItemProvider(JSX_MODE, completionProvider, '.'));
-  context.subscriptions.push(vscode.languages.registerCompletionItemProvider(TSX_MODE, completionProvider, '.'));
+    context.subscriptions.push(vscode.languages.registerCompletionItemProvider(JSX_MODE, completionProvider, '.'));
+    context.subscriptions.push(vscode.languages.registerCompletionItemProvider(TSX_MODE, completionProvider, '.'));
 
-  context.subscriptions.push(vscode.commands.registerCommand('emmet.wrapWithAbbreviation', () => {
-    wrapWithAbbreviation();
-  }));
+    context.subscriptions.push(vscode.commands.registerCommand('emmet.wrapWithAbbreviation', () => {
+        wrapWithAbbreviation();
+    }));
 
-  context.subscriptions.push(vscode.commands.registerCommand('emmet.expandAbbreviation', () => {
-    expandAbbreviation();
-  }));
+    context.subscriptions.push(vscode.commands.registerCommand('emmet.expandAbbreviation', () => {
+        expandAbbreviation();
+    }));
 
-  context.subscriptions.push(vscode.commands.registerCommand('emmet.removeTag', () => {
-    removeTag();
-  }));
+    context.subscriptions.push(vscode.commands.registerCommand('emmet.removeTag', () => {
+        removeTag();
+    }));
 
-  context.subscriptions.push(vscode.commands.registerCommand('emmet.updateTag', () => {
-    vscode.window.showInputBox({prompt: 'Enter Tag'}).then(tagName => {
-      updateTag(tagName);
-    });
-  }));
+    context.subscriptions.push(vscode.commands.registerCommand('emmet.updateTag', () => {
+        vscode.window.showInputBox({prompt: 'Enter Tag'}).then(tagName => {
+            updateTag(tagName);
+        });
+    }));
 
-  context.subscriptions.push(vscode.commands.registerCommand('emmet.matchTag', () => {
-      matchTag();
-  }));
+    context.subscriptions.push(vscode.commands.registerCommand('emmet.matchTag', () => {
+        matchTag();
+    }));
 
-  context.subscriptions.push(vscode.commands.registerCommand('emmet.balanceOut', () => {
-      balanceOut();
-  }));
+    context.subscriptions.push(vscode.commands.registerCommand('emmet.balanceOut', () => {
+        balanceOut();
+    }));
 }
 
 export function deactivate() {
