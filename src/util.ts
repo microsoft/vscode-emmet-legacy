@@ -80,7 +80,7 @@ export function getNode(root: Node, offset: number) {
     let foundNode: Node = null;
 
     while (currentNode) {
-        if (currentNode.start <= offset && currentNode.end >= offset) {
+        if (currentNode.start < offset && currentNode.end > offset) {
             foundNode = currentNode;
             // Dig deeper
             currentNode = currentNode.firstChild;
@@ -90,6 +90,14 @@ export function getNode(root: Node, offset: number) {
     }
 
     return foundNode;
+}
+
+export function getNodeOuterSelection(document: vscode.TextDocument, node: Node): vscode.Selection {
+    return new vscode.Selection(document.positionAt(node.start), document.positionAt(node.end));
+}
+
+export function getNodeInnerSelection(document: vscode.TextDocument, node: Node): vscode.Selection {
+    return new vscode.Selection(document.positionAt(node.open.end), document.positionAt(node.close.start));
 }
 
 export function extractAbbreviation(position: vscode.Position): [vscode.Range, string] {

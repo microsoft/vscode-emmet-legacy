@@ -1,7 +1,7 @@
 'use strict';
 
 import * as vscode from 'vscode';
-import { getOpenCloseRange, getNode } from './util';
+import { getNode } from './util';
 import parse from '@emmetio/html-matcher';
 import Node from '@emmetio/node';
 

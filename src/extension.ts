@@ -6,6 +6,7 @@ import { expandAbbreviation, wrapWithAbbreviation } from './abbreviationActions'
 import { removeTag } from './removeTag';
 import { updateTag } from './updateTag';
 import { matchTag } from './matchTag';
+import { balanceOut } from './balance';
 
 const HTML_MODE: vscode.DocumentFilter = { language: 'html', scheme: 'file' };
 const JADE_MODE: vscode.DocumentFilter = { language: 'jade', scheme: 'file' };
@@ -59,6 +60,10 @@ export function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(vscode.commands.registerCommand('emmet.matchTag', () => {
       matchTag();
+  }));
+
+  context.subscriptions.push(vscode.commands.registerCommand('emmet.balanceOut', () => {
+      balanceOut();
   }));
 }
 
