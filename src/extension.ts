@@ -7,6 +7,7 @@ import { removeTag } from './removeTag';
 import { updateTag } from './updateTag';
 import { matchTag } from './matchTag';
 import { balanceOut, balanceIn } from './balance';
+import { splitJoinTag } from './splitJoinTag';
 
 interface ISupportedLanguageMode {
     id: string;
@@ -54,7 +55,7 @@ export function activate(context: vscode.ExtensionContext) {
     }));
 
     context.subscriptions.push(vscode.commands.registerCommand('emmet.updateTag', () => {
-        vscode.window.showInputBox({prompt: 'Enter Tag'}).then(tagName => {
+        vscode.window.showInputBox({ prompt: 'Enter Tag' }).then(tagName => {
             updateTag(tagName);
         });
     }));
@@ -70,6 +71,11 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(vscode.commands.registerCommand('emmet.balanceIn', () => {
         balanceIn();
     }));
+
+    context.subscriptions.push(vscode.commands.registerCommand('emmet.splitJoinTag', () => {
+        splitJoinTag();
+    }));
+
 }
 
 export function deactivate() {
