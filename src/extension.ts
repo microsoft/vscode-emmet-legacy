@@ -8,6 +8,7 @@ import { updateTag } from './updateTag';
 import { matchTag } from './matchTag';
 import { balanceOut, balanceIn } from './balance';
 import { splitJoinTag } from './splitJoinTag';
+import { mergeLines } from './mergeLines';
 
 interface ISupportedLanguageMode {
     id: string;
@@ -74,6 +75,10 @@ export function activate(context: vscode.ExtensionContext) {
 
     context.subscriptions.push(vscode.commands.registerCommand('emmet.splitJoinTag', () => {
         splitJoinTag();
+    }));
+
+    context.subscriptions.push(vscode.commands.registerCommand('emmet.mergeLines', () => {
+        mergeLines();
     }));
 
 }

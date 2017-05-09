@@ -75,12 +75,14 @@ export function getOpenCloseRange(document: vscode.TextDocument, offset: number)
     return [openRange, closeRange];
 }
 
-export function getNode(root: Node, offset: number) {
+export function getNode(root: Node, offset: number, includeNodeBoundary: boolean = false) {
     let currentNode: Node = root.firstChild;
     let foundNode: Node = null;
 
     while (currentNode) {
-        if (currentNode.start < offset && currentNode.end > offset) {
+        if ((currentNode.start < offset && currentNode.end > offset)
+            || (includeNodeBoundary && (currentNode.start <= offset && currentNode.end >= offset))) {
+
             foundNode = currentNode;
             // Dig deeper
             currentNode = currentNode.firstChild;
