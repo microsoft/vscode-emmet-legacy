@@ -6,7 +6,7 @@ import { expandAbbreviation, wrapWithAbbreviation } from './abbreviationActions'
 import { removeTag } from './removeTag';
 import { updateTag } from './updateTag';
 import { matchTag } from './matchTag';
-import { balanceOut } from './balance';
+import { balanceOut, balanceIn } from './balance';
 
 interface ISupportedLanguageMode {
     id: string;
@@ -65,6 +65,10 @@ export function activate(context: vscode.ExtensionContext) {
 
     context.subscriptions.push(vscode.commands.registerCommand('emmet.balanceOut', () => {
         balanceOut();
+    }));
+
+    context.subscriptions.push(vscode.commands.registerCommand('emmet.balanceIn', () => {
+        balanceIn();
     }));
 }
 
