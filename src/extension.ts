@@ -9,7 +9,7 @@ import { matchTag } from './matchTag';
 import { balanceOut, balanceIn } from './balance';
 import { splitJoinTag } from './splitJoinTag';
 import { mergeLines } from './mergeLines';
-
+import { toggleComment } from './toggleComment';
 interface ISupportedLanguageMode {
     id: string;
     triggerCharacters: string[];
@@ -79,6 +79,10 @@ export function activate(context: vscode.ExtensionContext) {
 
     context.subscriptions.push(vscode.commands.registerCommand('emmet.mergeLines', () => {
         mergeLines();
+    }));
+
+    context.subscriptions.push(vscode.commands.registerCommand('emmet.toggleComment', () => {
+        toggleComment();
     }));
 
 }
