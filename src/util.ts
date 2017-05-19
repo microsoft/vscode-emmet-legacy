@@ -5,6 +5,19 @@ import parse from '@emmetio/html-matcher';
 import Node from '@emmetio/node';
 import * as extract from '@emmetio/extract-abbreviation';
 
+
+export function validate(allowStylesheet: boolean = true): boolean {
+    let editor = vscode.window.activeTextEditor;
+    if (!editor) {
+        vscode.window.showInformationMessage('No editor is active');
+        return false;
+    }
+    if (!allowStylesheet && isStyleSheet(editor.document.languageId)) {
+        return false;
+    }
+    return true;
+}
+
 export function getSyntax(document: vscode.TextDocument): string {
     if (document.languageId === 'jade') {
         return 'pug';

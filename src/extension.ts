@@ -10,6 +10,7 @@ import { balanceOut, balanceIn } from './balance';
 import { splitJoinTag } from './splitJoinTag';
 import { mergeLines } from './mergeLines';
 import { toggleComment } from './toggleComment';
+import { nextEditPoint, prevEditPoint } from './editPoint';
 interface ISupportedLanguageMode {
     id: string;
     triggerCharacters: string[];
@@ -83,6 +84,14 @@ export function activate(context: vscode.ExtensionContext) {
 
     context.subscriptions.push(vscode.commands.registerCommand('emmet.toggleComment', () => {
         toggleComment();
+    }));
+    
+    context.subscriptions.push(vscode.commands.registerCommand('emmet.nextEditPoint', () => {
+        nextEditPoint();
+    }));
+
+    context.subscriptions.push(vscode.commands.registerCommand('emmet.prevEditPoint', () => {
+        prevEditPoint();
     }));
 
 }
