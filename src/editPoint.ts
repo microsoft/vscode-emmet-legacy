@@ -3,37 +3,40 @@
 import * as vscode from 'vscode';
 import { validate } from './util';
 
-export function nextEditPoint() {
+export function fetchEditPoint(direction: string): void {
     let editor = vscode.window.activeTextEditor;
     if (!validate()) {
         return;
     }
 
-    let position = editor.selection.anchor;
+    let newSelections: vscode.Selection[] = [];
+    editor.selections.forEach(selection => {
+        let updatedSelection = direction === 'next' ? nextEditPoint(selection.anchor, editor) : prevEditPoint(selection.anchor, editor);
+        newSelections.push(updatedSelection);
+    });
+    editor.selections = newSelections;
+}
 
+function nextEditPoint(position: vscode.Position, editor: vscode.TextEditor): vscode.Selection {
     for (let lineNum = position.line; lineNum < editor.document.lineCount; lineNum++) {
-        if (findEditPoint(lineNum, editor, position, 'next')) {
-            return;
+        let updatedSelection = findEditPoint(lineNum, editor, position, 'next');
+        if (updatedSelection) {
+            return updatedSelection;
         }
     }
 }
 
-export function prevEditPoint() {
-    let editor = vscode.window.activeTextEditor;
-    if (!validate()) {
-        return;
-    }
-
-    let position = editor.selection.anchor;
-
+function prevEditPoint(position: vscode.Position, editor: vscode.TextEditor): vscode.Selection {
     for (let lineNum = position.line; lineNum >= 0; lineNum--) {
-        if (findEditPoint(lineNum, editor, position, 'prev')) {
-            return;
+        let updatedSelection = findEditPoint(lineNum, editor, position, 'prev');
+        if (updatedSelection) {
+            return updatedSelection;
         }
     }
 }
 
-function findEditPoint(lineNum, editor, position, direction): boolean {
+
+function findEditPoint(lineNum: number, editor: vscode.TextEditor, position: vscode.Position, direction: string): vscode.Selection {
     let line = editor.document.lineAt(lineNum);
 
     if (lineNum != position.line && line.isEmptyOrWhitespace) {
@@ -42,16 +45,16 @@ function findEditPoint(lineNum, editor, position, direction): boolean {
     }
 
     let lineContent = line.text;
-    if (lineNum == position.line && direction == 'prev' ) {
+    if (lineNum === position.line && direction === 'prev') {
         lineContent = lineContent.substr(0, position.character);
     }
-    let emptyAttrIndex = direction == 'next' ? lineContent.indexOf('""', lineNum == position.line ? position.character: 0) : lineContent.lastIndexOf('""');
-    let emptyTagIndex = direction == 'next' ? lineContent.indexOf('><', lineNum == position.line ? position.character: 0) : lineContent.lastIndexOf('><');
+    let emptyAttrIndex = direction === 'next' ? lineContent.indexOf('""', lineNum === position.line ? position.character : 0) : lineContent.lastIndexOf('""');
+    let emptyTagIndex = direction === 'next' ? lineContent.indexOf('><', lineNum === position.line ? position.character : 0) : lineContent.lastIndexOf('><');
 
     let winner = -1;
 
     if (emptyAttrIndex > -1 && emptyTagIndex > -1) {
-        winner = direction == 'next' ? Math.min(emptyAttrIndex, emptyTagIndex) : Math.max(emptyAttrIndex, emptyTagIndex);
+        winner = direction === 'next' ? Math.min(emptyAttrIndex, emptyTagIndex) : Math.max(emptyAttrIndex, emptyTagIndex);
     } else if (emptyAttrIndex > -1) {
         winner = emptyAttrIndex;
     } else {
@@ -59,13 +62,6 @@ function findEditPoint(lineNum, editor, position, direction): boolean {
     }
 
     if (winner > -1) {
-        editor.selection = new vscode.Selection(lineNum, winner + 1, lineNum, winner + 1);
-        return true;
+        return new vscode.Selection(lineNum, winner + 1, lineNum, winner + 1);
     }
-    return false;
 }
-
-
-
-
-
