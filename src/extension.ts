@@ -11,6 +11,8 @@ import { splitJoinTag } from './splitJoinTag';
 import { mergeLines } from './mergeLines';
 import { toggleComment } from './toggleComment';
 import { fetchEditPoint } from './editPoint';
+import { fetchSelectItem } from './selectItem';
+
 interface ISupportedLanguageMode {
     id: string;
     triggerCharacters: string[];
@@ -92,6 +94,14 @@ export function activate(context: vscode.ExtensionContext) {
 
     context.subscriptions.push(vscode.commands.registerCommand('emmet.prevEditPoint', () => {
         fetchEditPoint('prev');
+    }));
+
+    context.subscriptions.push(vscode.commands.registerCommand('emmet.selectNextItem', () => {
+        fetchSelectItem('next');
+    }));
+
+    context.subscriptions.push(vscode.commands.registerCommand('emmet.selectPrevItem', () => {
+        fetchSelectItem('prev');
     }));
 
 }
