@@ -59,23 +59,32 @@ function toggleCommentHTML(document: vscode.TextDocument, selection: vscode.Sele
     let offset = document.offsetAt(selection.start);
     let nodeToUpdate = getNode(rootNode, offset);
 
-    let commentNode = nodeToUpdate.type !== 'comment';
     let rangesToUnComment = getRangesToUnCommentHTML(nodeToUpdate, document);
-    let positionForCommentStart = commentNode ? document.positionAt(nodeToUpdate.start) : null;
-    let positionForCommentEnd = commentNode ? document.positionAt(nodeToUpdate.end) : null;
-
+    if (nodeToUpdate.type === 'comment') {
+        return [rangesToUnComment, null, null];
+    }
+    
+    let positionForCommentStart = document.positionAt(nodeToUpdate.start);
+    let positionForCommentEnd = document.positionAt(nodeToUpdate.end);
     return [rangesToUnComment, positionForCommentStart, positionForCommentEnd];
 }
 
 function getRangesToUnCommentHTML(node: Node, document: vscode.TextDocument): vscode.Range[] {
     let rangesToUnComment = [];
+
+    // If current node is commented, then uncomment and return
     if (node.type === 'comment') {
         rangesToUnComment.push(new vscode.Range(document.positionAt(node.start), document.positionAt(node.start + startCommentHTML.length)));
         rangesToUnComment.push(new vscode.Range(document.positionAt(node.end), document.positionAt(node.end - endCommentHTML.length)));
+
+        return rangesToUnComment;
     }
+
+    // All children of current node should be uncommented
     node.children.forEach(childNode => {        
         rangesToUnComment = rangesToUnComment.concat(getRangesToUnCommentHTML(childNode, document));
     });
+
     return rangesToUnComment;
 }
 
