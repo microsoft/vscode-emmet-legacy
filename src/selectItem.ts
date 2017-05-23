@@ -1,140 +1,37 @@
 'use strict';
 import * as vscode from 'vscode';
-import { validate, getNode } from './util';
-import Node from '@emmetio/node';
+import { validate, isStyleSheet } from './util';
+import { nextItemHTML, prevItemHTML } from './selectItemHTML';
+import { nextItemStylesheet, prevItemStylesheet } from './selectItemStylesheet';
+import parseStylesheet from '@emmetio/css-parser';
 import parse from '@emmetio/html-matcher';
+import Node from '@emmetio/node';
 
 export function fetchSelectItem(direction: string): void {
     let editor = vscode.window.activeTextEditor;
     if (!validate()) {
         return;
     }
-    let rootNode: Node = parse(editor.document.getText());
+
+    let nextItem;
+    let prevItem;
+    let parseContent;
+
+    if (isStyleSheet(editor.document.languageId)) {
+        nextItem = nextItemStylesheet;
+        prevItem = prevItemStylesheet;
+        parseContent = parseStylesheet;
+    } else {
+        nextItem = nextItemHTML;
+        prevItem = prevItemHTML;
+        parseContent = parse;
+    }
+
+    let rootNode: Node = parseContent(editor.document.getText());
     let newSelections: vscode.Selection[] = [];
     editor.selections.forEach(selection => {
         let updatedSelection = direction === 'next' ? nextItem(selection, editor, rootNode) : prevItem(selection, editor, rootNode);
         newSelections.push(updatedSelection ? updatedSelection : selection);
     });
     editor.selections = newSelections;
-}
-
-function nextItem(selection: vscode.Selection, editor: vscode.TextEditor, rootNode: Node): vscode.Selection {
-    let offset = editor.document.offsetAt(selection.active);
-    let currentNode = getNode(rootNode, offset);
-
-    // Cursor is in the open tag, look for attributes
-    if (offset < currentNode.open.end) {
-        let attrSelection = getNextAttribute(selection, editor.document, currentNode);
-        if (attrSelection) {
-            return attrSelection;
-        }
-    }
-
-    // Get the first child of current node which is right after the cursor
-    let nextNode = currentNode.firstChild;
-    while (nextNode && nextNode.start < offset) {
-        nextNode = nextNode.nextSibling;
-    }
-
-    // Get next sibling of current node or the parent
-    while (!nextNode && currentNode) {
-        nextNode = currentNode.nextSibling;
-        currentNode = currentNode.parent;
-    }
-
-    return getSelectionFromNode(nextNode, editor.document);
-}
-
-function prevItem(selection: vscode.Selection, editor: vscode.TextEditor, rootNode: Node): vscode.Selection {
-    let offset = editor.document.offsetAt(selection.active);
-    let currentNode = getNode(rootNode, offset);
-    let prevNode: Node;
-
-    // Cursor is in the open tag after the tag name
-    if (offset > currentNode.open.start + currentNode.name.length + 1 && offset <= currentNode.open.end) {
-        prevNode = currentNode;
-    }
-
-    // Cursor is inside the tag
-    if (!prevNode && offset > currentNode.open.end) {
-        if (!currentNode.firstChild) {
-            // No children, so current node should be selected
-            prevNode = currentNode
-        } else {
-            // Select the child that appears just before the cursor
-            prevNode = currentNode.firstChild;
-            while (prevNode.nextSibling && prevNode.nextSibling.end < offset) {
-                prevNode = prevNode.nextSibling;
-            }
-        }
-    }
-
-    if (!prevNode && currentNode.previousSibling) {
-        let prevSiblingChildren = (currentNode.previousSibling && currentNode.previousSibling.children) ? currentNode.previousSibling.children : [];
-        prevNode = prevSiblingChildren.length > 0 ? prevSiblingChildren[prevSiblingChildren.length - 1] : currentNode.previousSibling;
-    }
-
-    if (!prevNode && currentNode.parent) {
-        prevNode = currentNode.parent;
-    }
-
-    let attrSelection = getPrevAttribute(selection, editor.document, prevNode);
-    return attrSelection ? attrSelection : getSelectionFromNode(prevNode, editor.document);
-}
-
-function getSelectionFromNode(node: Node, document: vscode.TextDocument): vscode.Selection {
-    if (node && node.open) {
-        let selectionStart = document.positionAt(node.open.start + 1);
-        let selectionEnd = node.type === 'comment' ? document.positionAt(node.open.end - 1) : selectionStart.translate(0, node.name.length);
-
-        return new vscode.Selection(selectionStart, selectionEnd);
-    }
-}
-
-function getNextAttribute(selection: vscode.Selection, document: vscode.TextDocument, node: Node): vscode.Selection {
-
-    if (!node.attributes || node.attributes.length === 0 || node.type === 'comment') {
-        return;
-    }
-
-    let selectionStart = document.offsetAt(selection.anchor);
-    let selectionEnd = document.offsetAt(selection.active);
-
-    for (let i = 0; i < node.attributes.length; i++) {
-        let attr = node.attributes[i];
-
-        if (selectionEnd < attr.start) {
-            // select full attr
-            return new vscode.Selection(document.positionAt(attr.start), document.positionAt(attr.end));
-        }
-
-        if ((attr.value.start !== attr.value.end) && ((selectionStart === attr.start && selectionEnd === attr.end) || selectionEnd < attr.end - 1)) {
-            // select attr value
-            return new vscode.Selection(document.positionAt(attr.value.start), document.positionAt(attr.value.end));
-        }
-    }
-}
-
-function getPrevAttribute(selection: vscode.Selection, document: vscode.TextDocument, node: Node): vscode.Selection {
-
-    if (!node.attributes || node.attributes.length === 0 || node.type === 'comment') {
-        return;
-    }
-
-    let selectionStart = document.offsetAt(selection.anchor);
-    let selectionEnd = document.offsetAt(selection.active);
-
-    for (let i = node.attributes.length - 1; i >= 0; i--) {
-        let attr = node.attributes[i];
-
-        if (selectionStart > attr.value.start) {
-            // select attr value
-            return new vscode.Selection(document.positionAt(attr.value.start), document.positionAt(attr.value.end));
-        }
-
-        if (selectionStart > attr.start) {
-            // select full attr
-            return new vscode.Selection(document.positionAt(attr.start), document.positionAt(attr.end));
-        }
-    }
 }

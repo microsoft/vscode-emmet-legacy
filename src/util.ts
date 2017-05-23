@@ -126,3 +126,11 @@ export function extractAbbreviation(position: vscode.Position): [vscode.Range, s
     let rangeToReplace = new vscode.Range(position.line, result.location, position.line, result.location + result.abbreviation.length);
     return [rangeToReplace, result.abbreviation];
 }
+
+export function getDeepestNode(node: Node): Node {
+    if (!node || !node.children || node.children.length === 0) {
+        return node;
+    }
+
+    return getDeepestNode(node.children[node.children.length - 1]);
+}
