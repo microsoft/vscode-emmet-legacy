@@ -1,5 +1,9 @@
 # Emmet plugin for [Visual Studio Code](https://code.visualstudio.com)
 
+**This repo is no longer maintained.
+The emmet extension has been moved to the VS Code repo, so that it gets shipped as a built in extension.
+See https://github.com/Microsoft/vscode/tree/master/extensions/emmet**
+
 This is experimental alpha version of new Emmet plugin with limited features. 
 
 - Expanded abbreviation show up in the suggestion list.
