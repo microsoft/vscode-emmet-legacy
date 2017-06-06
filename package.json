@@ -26,6 +26,7 @@
         "onLanguage:sass",
         "onLanguage:less",
         "onLanguage:stylus",
+        "onLanguage:javascript",
         "onLanguage:javascriptreact",
         "onLanguage:typescriptreact"
     ],
